@@ -51,7 +51,9 @@ class _ChallengePageState extends State<ChallengePage> {
               Expanded(
                 child: NextButtonWidget.white(
                   label: "Voltar",
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
                 ),
               ),
               SizedBox(
