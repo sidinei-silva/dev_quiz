@@ -6,7 +6,7 @@
     "questionAnswered": 1,
     "questions": [
       {
-        "title": "Está curtindo o flutter",
+        "title": "Está curtindo o Flutter?",
         "answers": [
           {
             "title": "Estou Curtindo"
@@ -24,7 +24,7 @@
         ]
       },
       {
-        "title": "Está curtindo o flutter",
+        "title": "Está curtindo o Flutter?",
         "answers": [
           {
             "title": "Estou Curtindo"
