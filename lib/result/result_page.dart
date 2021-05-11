@@ -1,8 +1,20 @@
 import 'package:DevQuiz/challenge/widgets/next_button/next_button_widget.dart';
 import 'package:DevQuiz/core/core.dart';
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ResultPage extends StatelessWidget {
+  final String title;
+  final int lenght;
+  final int result;
+
+  const ResultPage(
+      {Key? key,
+      required this.title,
+      required this.lenght,
+      required this.result})
+      : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,11 +41,11 @@ class ResultPage extends StatelessWidget {
                     style: AppTextStyles.body,
                     children: [
                       TextSpan(
-                        text: "\nGerenciamento de Estado",
+                        text: "\n$title",
                         style: AppTextStyles.bodyBold,
                       ),
                       TextSpan(
-                        text: "\ncom 6 de 10 acertos.",
+                        text: "\ncom $result de $lenght acertos.",
                         style: AppTextStyles.body,
                       ),
                     ],
@@ -50,7 +62,10 @@ class ResultPage extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 68),
                         child: NextButtonWidget.purple(
-                            label: "Compartilhar", onTap: () {}),
+                            label: "Compartilhar",
+                            onTap: () {
+                              Share.share("text");
+                            }),
                       ),
                     ),
                   ],
