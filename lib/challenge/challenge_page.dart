@@ -1,4 +1,5 @@
 import 'package:DevQuiz/challenge/challenge_controller.dart';
+import 'package:DevQuiz/result/result_page.dart';
 import 'package:flutter/material.dart';
 
 import 'package:DevQuiz/challenge/widgets/next_button/next_button_widget.dart';
@@ -97,7 +98,12 @@ class _ChallengePageState extends State<ChallengePage> {
                           child: NextButtonWidget.green(
                             label: "Confirmar",
                             onTap: () {
-                              Navigator.pop(context);
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ResultPage(),
+                                ),
+                              );
                             },
                           ),
                         ),
