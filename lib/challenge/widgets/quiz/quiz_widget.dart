@@ -1,12 +1,26 @@
-import 'package:DevQuiz/challenge/widgets/awnser/awnser_widget.dart';
 import 'package:flutter/material.dart';
+
+import 'package:DevQuiz/challenge/widgets/awnser/awnser_widget.dart';
+import 'package:DevQuiz/shared/models/question_model.dart';
 
 import '../../../core/core.dart';
 
-class QuizWidget extends StatelessWidget {
-  final String title;
+class QuizWidget extends StatefulWidget {
+  final QuestionModel question;
+  final VoidCallback onChange;
 
-  const QuizWidget({Key? key, required this.title}) : super(key: key);
+  const QuizWidget({
+    Key? key,
+    required this.question,
+    required this.onChange,
+  }) : super(key: key);
+
+  @override
+  _QuizWidgetState createState() => _QuizWidgetState();
+}
+
+class _QuizWidgetState extends State<QuizWidget> {
+  int indexSelected = -1;
 
   @override
   Widget build(BuildContext context) {
@@ -14,27 +28,27 @@ class QuizWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          title,
+          widget.question.title,
           style: AppTextStyles.heading,
         ),
         SizedBox(
           height: 24,
         ),
-        AwnserWidget(
-          isRight: true,
-          isSelected: true,
-          title: "Possibilita a criação de aplicativos compilados nativamente",
-        ),
-        AwnserWidget(
-          isSelected: true,
-          title: "Possibilita a criação de aplicativos compilados nativamente",
-        ),
-        AwnserWidget(
-          title: "Possibilita a criação de aplicativos compilados nativamente",
-        ),
-        AwnserWidget(
-          title: "Possibilita a criação de aplicativos compilados nativamente",
-        ),
+        ...widget.question.answers.asMap().entries.map(
+          (anwser) {
+            return AwnserWidget(
+              answer: anwser.value,
+              disabled: indexSelected != -1,
+              isSelected: indexSelected == anwser.key,
+              onTap: () {
+                indexSelected = anwser.key;
+                setState(() {});
+                Future.delayed(Duration(seconds: 1))
+                    .then((_) => widget.onChange());
+              },
+            );
+          },
+        ).toList(),
       ],
     );
   }
