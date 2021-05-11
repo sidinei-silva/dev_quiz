@@ -1,3 +1,4 @@
+import 'package:DevQuiz/challenge/challenge_controller.dart';
 import 'package:flutter/material.dart';
 
 import 'package:DevQuiz/challenge/widgets/next_button/next_button_widget.dart';
@@ -18,6 +19,17 @@ class ChallengePage extends StatefulWidget {
 }
 
 class _ChallengePageState extends State<ChallengePage> {
+  final challengeController = ChallengeController();
+  final pageController = PageController();
+
+  @override
+  void initState() {
+    pageController.addListener(() {
+      challengeController.currentPage = pageController.page!.toInt();
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,13 +46,27 @@ class _ChallengePageState extends State<ChallengePage> {
                   Navigator.pop(context);
                 },
               ),
-              QuestionIndicatorWidget(),
+              ValueListenableBuilder<int>(
+                valueListenable: challengeController.currentPageNotifier,
+                builder: (context, value, _) => QuestionIndicatorWidget(
+                  currentPage: value + 1,
+                  length: widget.questions.length,
+                ),
+              ),
             ],
           ),
         ),
       ),
-      body: QuizWidget(
-        question: widget.questions[0],
+      body: PageView(
+        physics: NeverScrollableScrollPhysics(),
+        controller: pageController,
+        children: widget.questions
+            .map(
+              (question) => QuizWidget(
+                question: question,
+              ),
+            )
+            .toList(),
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(
@@ -50,9 +76,12 @@ class _ChallengePageState extends State<ChallengePage> {
             children: [
               Expanded(
                 child: NextButtonWidget.white(
-                  label: "Voltar",
+                  label: "Pular",
                   onTap: () {
-                    Navigator.pop(context);
+                    pageController.nextPage(
+                      duration: Duration(milliseconds: 200),
+                      curve: Curves.linear,
+                    );
                   },
                 ),
               ),
