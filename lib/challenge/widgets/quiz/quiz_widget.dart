@@ -5,13 +5,22 @@ import 'package:DevQuiz/shared/models/question_model.dart';
 
 import '../../../core/core.dart';
 
-class QuizWidget extends StatelessWidget {
+class QuizWidget extends StatefulWidget {
   final QuestionModel question;
+  final VoidCallback onChange;
 
   const QuizWidget({
     Key? key,
     required this.question,
+    required this.onChange,
   }) : super(key: key);
+
+  @override
+  _QuizWidgetState createState() => _QuizWidgetState();
+}
+
+class _QuizWidgetState extends State<QuizWidget> {
+  int indexSelected = -1;
 
   @override
   Widget build(BuildContext context) {
@@ -19,20 +28,27 @@ class QuizWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          question.title,
+          widget.question.title,
           style: AppTextStyles.heading,
         ),
         SizedBox(
           height: 24,
         ),
-        ...question.answers
-            .map(
-              (anwser) => AwnserWidget(
-                isRight: anwser.isRight,
-                title: anwser.title,
-              ),
-            )
-            .toList(),
+        ...widget.question.answers.asMap().entries.map(
+          (anwser) {
+            return AwnserWidget(
+              answer: anwser.value,
+              disabled: indexSelected != -1,
+              isSelected: indexSelected == anwser.key,
+              onTap: () {
+                indexSelected = anwser.key;
+                setState(() {});
+                Future.delayed(Duration(seconds: 1))
+                    .then((_) => widget.onChange());
+              },
+            );
+          },
+        ).toList(),
       ],
     );
   }

@@ -22,10 +22,18 @@ class _ChallengePageState extends State<ChallengePage> {
   final challengeController = ChallengeController();
   final pageController = PageController();
 
+  void nextPage() {
+    if (challengeController.currentPage < widget.questions.length)
+      pageController.nextPage(
+        duration: Duration(milliseconds: 200),
+        curve: Curves.linear,
+      );
+  }
+
   @override
   void initState() {
     pageController.addListener(() {
-      challengeController.currentPage = pageController.page!.toInt();
+      challengeController.currentPage = pageController.page!.toInt() + 1;
     });
     super.initState();
   }
@@ -49,7 +57,7 @@ class _ChallengePageState extends State<ChallengePage> {
               ValueListenableBuilder<int>(
                 valueListenable: challengeController.currentPageNotifier,
                 builder: (context, value, _) => QuestionIndicatorWidget(
-                  currentPage: value + 1,
+                  currentPage: value,
                   length: widget.questions.length,
                 ),
               ),
@@ -64,6 +72,7 @@ class _ChallengePageState extends State<ChallengePage> {
             .map(
               (question) => QuizWidget(
                 question: question,
+                onChange: nextPage,
               ),
             )
             .toList(),
@@ -71,31 +80,29 @@ class _ChallengePageState extends State<ChallengePage> {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Expanded(
-                child: NextButtonWidget.white(
-                  label: "Pular",
-                  onTap: () {
-                    pageController.nextPage(
-                      duration: Duration(milliseconds: 200),
-                      curve: Curves.linear,
-                    );
-                  },
-                ),
-              ),
-              SizedBox(
-                width: 7,
-              ),
-              Expanded(
-                child: NextButtonWidget.green(
-                  label: "Confirmar",
-                  onTap: () {},
-                ),
-              ),
-            ],
-          ),
+          child: ValueListenableBuilder<int>(
+              valueListenable: challengeController.currentPageNotifier,
+              builder: (context, value, _) => Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      if (value < widget.questions.length)
+                        Expanded(
+                          child: NextButtonWidget.white(
+                            label: "Pular",
+                            onTap: nextPage,
+                          ),
+                        ),
+                      if (value == widget.questions.length)
+                        Expanded(
+                          child: NextButtonWidget.green(
+                            label: "Confirmar",
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ),
+                    ],
+                  )),
         ),
       ),
     );
